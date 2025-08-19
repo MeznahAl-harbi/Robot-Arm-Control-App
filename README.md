@@ -27,15 +27,14 @@ robot_controller_new/
 ```
 ---
 
+
 ## ⚙️ Requirements
 
-- Flutter SDK
-
-- PHP 7 or higher
-
-- MySQL Database
-
+- [Flutter SDK](https://docs.flutter.dev/get-started/install)
+- PHP 7 or higher ([PHP Docs](https://www.php.net/docs.php))
+- MySQL Database managed via [phpMyAdmin](https://www.phpmyadmin.net/)
 - Local server (e.g., XAMPP, WAMP, or MAMP)
+
 
 ---
 
@@ -78,8 +77,16 @@ $dbname = "robot_arm_db";
    ```
 
 ---
+## ⚠️ Notes
+- Make sure your device/emulator and PHP server are on the same network.
+- Update the `apiUrl` in `lib/main.dart` to your server IP.
+- Ensure PHP server and MySQL are running before launching the app.
+
+---
 
 ## 📸  Output
 
 
-![App Screenshot](Screenshot.png)
+![App Screenshot](Output/Screenshot.png)
+
+
