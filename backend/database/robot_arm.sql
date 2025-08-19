@@ -1,0 +1,16 @@
+CREATE DATABASE robot_arm;
+USE robot_arm;
+
+CREATE TABLE poses (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  motor1 INT NOT NULL,
+  motor2 INT NOT NULL,
+  motor3 INT NOT NULL,
+  motor4 INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE status (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  is_running INT DEFAULT 0
+);
