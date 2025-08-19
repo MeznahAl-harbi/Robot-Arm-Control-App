@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// This Flutter app allows users to control a 4-motor robotic arm.
+// Users can adjust each motor's angle with sliders, save poses locally,
+// and send/receive poses to/from a PHP backend server using HTTP requests.
+
 void main() {
   runApp(const RobotArmApp());
 }
@@ -11,6 +15,7 @@ class RobotArmApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Main app scaffold
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Robot Arm Control',
@@ -31,11 +36,21 @@ class ControlPage extends StatefulWidget {
 }
 
 class _ControlPageState extends State<ControlPage> {
+  // Current motor values (default = 90°)
   double motor1 = 90, motor2 = 90, motor3 = 90, motor4 = 90;
+
+  // Saved poses (each pose is a list of 4 motor values)
   List<List<int>> savedPoses = [];
+
+  // Replace with your ESP32 / server API endpoint
   final String apiUrl = "http://192.168.8.49/robot_controller_new";
 
+  // ------------------------
+  // Main control functions
+  // ------------------------
+
   void savePose() {
+    // Save current motor angles locally and send them to the server
     savedPoses.add([
       motor1.toInt(),
       motor2.toInt(),
@@ -47,12 +62,14 @@ class _ControlPageState extends State<ControlPage> {
   }
 
   void resetPose() {
+    // Reset all motor angles to default (90°)
     setState(() {
       motor1 = motor2 = motor3 = motor4 = 90;
     });
   }
 
   void runPose(List<int> pose) {
+    // Apply a saved pose to the motors
     setState(() {
       motor1 = pose[0].toDouble();
       motor2 = pose[1].toDouble();
@@ -61,7 +78,12 @@ class _ControlPageState extends State<ControlPage> {
     });
   }
 
+  // ------------------------
+  // HTTP Requests Functions
+  // ------------------------
+
   Future<void> sendPoseToServer() async {
+    // Send the current motor angles to the PHP backend
     final url = Uri.parse('$apiUrl/insert_pose.php');
     try {
       final response = await http.post(
@@ -84,6 +106,7 @@ class _ControlPageState extends State<ControlPage> {
   }
 
   Future<void> fetchLastPose() async {
+    // Fetch the last saved pose from the PHP backend and apply it
     final url = Uri.parse('$apiUrl/get_run_pose.php');
     try {
       final response = await http.get(url);
@@ -105,7 +128,12 @@ class _ControlPageState extends State<ControlPage> {
     }
   }
 
+  // ------------------------
+  // UI widget for each motor slider
+  // ------------------------
+
   Widget motorSlider(String name, double value, Function(double) onChanged) {
+    // Returns a card with a slider for adjusting motor angles
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -115,7 +143,7 @@ class _ControlPageState extends State<ControlPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "$name: ${value.toInt()}°",
+              "$name: ${value.toInt()}°", // Display current motor value
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
             Slider(
@@ -133,7 +161,12 @@ class _ControlPageState extends State<ControlPage> {
     );
   }
 
+  // ------------------------
+  // Button style helper
+  // ------------------------
+
   ButtonStyle smallWhiteButtonStyle(Color textColor) {
+    // Returns a small white elevated button style with colored text
     return ElevatedButton.styleFrom(
       backgroundColor: Colors.white,
       foregroundColor: textColor,
@@ -141,6 +174,10 @@ class _ControlPageState extends State<ControlPage> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     );
   }
+
+  // ------------------------
+  // Build UI
+  // ------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -153,11 +190,15 @@ class _ControlPageState extends State<ControlPage> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
+            // Motor sliders
             motorSlider("Motor 1", motor1, (v) => setState(() => motor1 = v)),
             motorSlider("Motor 2", motor2, (v) => setState(() => motor2 = v)),
             motorSlider("Motor 3", motor3, (v) => setState(() => motor3 = v)),
             motorSlider("Motor 4", motor4, (v) => setState(() => motor4 = v)),
-            const SizedBox(height: 8),
+
+            const SizedBox(height: 6),
+
+            // Main control buttons: Reset, Save Pose, Run Last Pose
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -181,7 +222,10 @@ class _ControlPageState extends State<ControlPage> {
                 ),
               ],
             ),
+
             const SizedBox(height: 12),
+
+            // Saved poses title
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -189,6 +233,8 @@ class _ControlPageState extends State<ControlPage> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
+
+            // List of saved poses
             Expanded(
               child: savedPoses.isEmpty
                   ? const Center(
